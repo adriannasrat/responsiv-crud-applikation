@@ -1,0 +1,134 @@
+<div class="editor-wrap">
+  <a class="back-link" [routerLink]="back"
+    ><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Tillbaka till
+    {{ isQuote ? 'mina citat' : 'mina böcker' }}</a
+  >
+  <section class="editor-heading">
+    <span class="eyebrow">{{
+      isQuote ? 'ORD VÄRDA ATT SPARA' : 'ETT NYTT KAPITEL I SAMLINGEN'
+    }}</span>
+    <h1>{{ heading }}</h1>
+    <p>
+      {{
+        isQuote
+          ? 'Spara en tanke, en mening eller några ord som betyder något.'
+          : 'Fyll i bokens uppgifter. Du kan alltid ändra dem senare.'
+      }}
+    </p>
+  </section>
+  @if (error()) {
+    <div class="alert alert-danger" role="alert">{{ error() }}</div>
+  }
+  @if (loading()) {
+    <div class="card empty-state" role="status">Hämtar uppgifter…</div>
+  } @else if (ready()) {
+    <form
+      class="editor-card card"
+      [formGroup]="form"
+      (ngSubmit)="save()"
+      novalidate
+    >
+      @if (isQuote) {
+        <div class="mb-4">
+          <label class="form-label" for="text"
+            >Citat <span class="required-mark">*</span></label
+          ><textarea
+            id="text"
+            class="form-control"
+            formControlName="text"
+            rows="5"
+            maxlength="1000"
+            placeholder="Vilka ord vill du spara?"
+            [class.is-invalid]="invalid('text')"
+            [attr.aria-invalid]="invalid('text')"
+            aria-describedby="text-help"
+          ></textarea>
+          <div
+            id="text-help"
+            class="form-text"
+            [class.text-danger]="invalid('text')"
+          >
+            {{
+              invalid('text')
+                ? 'Skriv ett citat på 1–1 000 tecken.'
+                : form.controls.text.value.length + ' / 1 000 tecken'
+            }}
+          </div>
+        </div>
+      } @else {
+        <div class="mb-4">
+          <label class="form-label" for="title"
+            >Titel <span class="required-mark">*</span></label
+          ><input
+            id="title"
+            class="form-control"
+            formControlName="title"
+            maxlength="200"
+            placeholder="Bokens titel"
+            [class.is-invalid]="invalid('title')"
+            [attr.aria-invalid]="invalid('title')"
+            aria-describedby="title-help"
+          />
+          @if (invalid('title')) {
+            <div id="title-help" class="form-text text-danger">
+              Ange en titel på 1–200 tecken.
+            </div>
+          }
+        </div>
+      }
+      <div class="mb-4">
+        <label class="form-label" for="author"
+          >{{ isQuote ? 'Upphovsperson' : 'Författare' }}
+          <span class="required-mark">*</span></label
+        ><input
+          id="author"
+          class="form-control"
+          formControlName="author"
+          maxlength="200"
+          [placeholder]="
+            isQuote
+              ? 'Vem skrev orden? Skriv Okänd om du inte vet.'
+              : 'Författarens namn'
+          "
+          [class.is-invalid]="invalid('author')"
+          [attr.aria-invalid]="invalid('author')"
+          aria-describedby="author-help"
+        />
+        @if (invalid('author')) {
+          <div id="author-help" class="form-text text-danger">
+            Ange ett namn på 1–200 tecken.
+          </div>
+        }
+      </div>
+      @if (!isQuote) {
+        <div class="mb-4">
+          <label class="form-label" for="publicationDate"
+            >Publiceringsdatum <span class="required-mark">*</span></label
+          ><input
+            id="publicationDate"
+            class="form-control date-input"
+            type="date"
+            formControlName="publicationDate"
+            min="0001-01-02"
+            max="9999-12-31"
+            [class.is-invalid]="invalid('publicationDate')"
+            [attr.aria-invalid]="invalid('publicationDate')"
+            aria-describedby="date-help"
+          />
+          @if (invalid('publicationDate')) {
+            <div id="date-help" class="form-text text-danger">
+              Välj ett giltigt publiceringsdatum.
+            </div>
+          }
+        </div>
+      }
+      <p class="form-text mb-4">* Alla fält är obligatoriska.</p>
+      <div class="form-actions">
+        <button class="btn btn-primary" type="submit" [disabled]="saving()">
+          <i class="fa-solid fa-check" aria-hidden="true"></i>
+          {{ saveButtonText }}</button
+        ><a class="btn btn-outline-secondary" [routerLink]="back">Avbryt</a>
+      </div>
+    </form>
+  }
+</div>

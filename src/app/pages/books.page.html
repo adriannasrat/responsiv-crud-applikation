@@ -1,0 +1,132 @@
+<section class="page-heading">
+  <div>
+    <span class="eyebrow">DIN PERSONLIGA SAMLING</span>
+    <h1>Mina böcker<span class="heading-dot">.</span></h1>
+    <p>Berättelser att återvända till. Och nya att upptäcka.</p>
+  </div>
+  <a class="btn btn-primary" routerLink="/bocker/ny"
+    ><i class="fa-solid fa-plus" aria-hidden="true"></i> Lägg till ny bok</a
+  >
+</section>
+<div class="collection-bar">
+  <span class="collection-count"
+    ><i class="fa-solid fa-book-open" aria-hidden="true"></i>
+    {{ books().length }} {{ books().length === 1 ? 'bok' : 'böcker' }} i
+    ditt bibliotek</span
+  ><a routerLink="/citat"
+    >Se dina favoritcitat
+    <i class="fa-solid fa-arrow-right" aria-hidden="true"></i
+  ></a>
+</div>
+<section class="library-panel card" aria-label="Boklista">
+  <div class="list-toolbar">
+    <h2>Alla böcker</h2>
+    <div class="search-field">
+      <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i
+      ><input
+        class="form-control"
+        type="search"
+        placeholder="Sök titel eller författare"
+        aria-label="Sök böcker"
+        [value]="search()"
+        (input)="search.set($any($event.target).value)"
+      />
+    </div>
+  </div>
+  @if (loading()) {
+    <div class="empty-state" role="status">
+      <span
+        class="spinner-border spinner-border-sm me-2"
+        aria-hidden="true"
+      ></span>
+      Hämtar dina böcker…
+    </div>
+  } @else if (error()) {
+    <div class="m-4 alert alert-danger" role="alert">
+      {{ error() }}
+      <button
+        type="button"
+        class="btn btn-outline-secondary ms-2"
+        (click)="load()"
+      >
+        Försök igen
+      </button>
+    </div>
+  } @else if (!books().length) {
+    <div class="empty-state">
+      <span class="empty-icon"
+        ><i class="fa-solid fa-book-open" aria-hidden="true"></i
+      ></span>
+      <h2>Här börjar ditt nästa kapitel</h2>
+      <p>
+        En gammal favorit eller något helt nytt?<br />Lägg till din första
+        bok och gör platsen till din.
+      </p>
+      <a routerLink="/bocker/ny" class="btn btn-outline-primary"
+        >Lägg till din första bok
+        <i class="fa-solid fa-arrow-right" aria-hidden="true"></i
+      ></a>
+    </div>
+  } @else if (!filtered().length) {
+    <div class="empty-state">
+      <h2>Ingen bok matchar din sökning</h2>
+      <p>Prova en annan titel eller författare.</p>
+      <button
+        class="btn btn-outline-primary"
+        type="button"
+        (click)="search.set('')"
+      >
+        Visa alla böcker
+      </button>
+    </div>
+  } @else {
+    <div class="book-table">
+      <div class="book-table-head">
+        <span>BOK / FÖRFATTARE</span><span>PUBLICERINGSDATUM</span
+        ><span class="text-end">HANTERA</span>
+      </div>
+      @for (book of filtered(); track book.id) {
+        <article class="book-row" [attr.aria-label]="book.title">
+          <div class="book-identity">
+            <span class="book-marker" aria-hidden="true"
+              ><i class="fa-solid fa-book"></i
+            ></span>
+            <div>
+              <h3>{{ book.title }}</h3>
+              <p>{{ book.author }}</p>
+            </div>
+          </div>
+          <div class="book-date">
+            <span class="mobile-label">Publicerad </span
+            >{{ book.publicationDate | date: 'yyyy-MM-dd' }}
+          </div>
+          <div class="row-actions">
+            <a
+              class="btn btn-outline-secondary btn-sm"
+              [routerLink]="['/bocker', book.id, 'redigera']"
+              [attr.aria-label]="'Redigera ' + book.title"
+              ><i class="fa-solid fa-pen" aria-hidden="true"></i>
+              Redigera</a
+            ><button
+              class="btn btn-delete btn-sm"
+              type="button"
+              (click)="remove(book)"
+              [disabled]="deleting() === book.id"
+              [attr.aria-label]="'Radera ' + book.title"
+            >
+              <i class="fa-regular fa-trash-can" aria-hidden="true"></i>
+              Radera
+            </button>
+          </div>
+        </article>
+      }
+    </div>
+    <div class="list-summary">
+      Visar {{ filtered().length }} av {{ books().length }} böcker
+    </div>
+  }
+</section>
+<p class="page-note">
+  <i class="fa-solid fa-lock" aria-hidden="true"></i> Bara du kan se och
+  hantera böckerna i ditt bibliotek.
+</p>

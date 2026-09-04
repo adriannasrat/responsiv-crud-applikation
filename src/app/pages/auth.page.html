@@ -1,0 +1,165 @@
+<section class="auth-layout">
+  <div class="auth-story">
+    <span class="eyebrow"
+      ><span class="small-rule"></span> DITT LILLA BIBLIOTEK</span
+    >
+    <h1>
+      Stora berättelser.<br />Små anteckningar.<br /><em>Helt ditt.</em>
+    </h1>
+    <p>
+      Samla böckerna du vill minnas och orden du vill ta med dig. Allt på en
+      och samma plats.
+    </p>
+    <div class="story-quote">
+      <i class="fa-solid fa-quote-left" aria-hidden="true"></i>
+      <blockquote>
+        Det finns alltid plats för en berättelse till.
+      </blockquote>
+      <span>BOKRUM</span>
+    </div>
+    <div class="story-tags">
+      <span
+        ><i class="fa-solid fa-book-open" aria-hidden="true"></i> Dina
+        böcker</span
+      ><span
+        ><i class="fa-regular fa-heart" aria-hidden="true"></i> Dina
+        favoritord</span
+      >
+    </div>
+  </div>
+  <div class="auth-card card">
+    <span class="eyebrow">{{
+      register ? 'ETT NYTT KAPITEL' : 'VÄLKOMMEN TILLBAKA'
+    }}</span>
+    <h2>{{ register ? 'Skapa ditt bokrum' : 'Logga in' }}</h2>
+    <p class="text-muted">
+      {{
+        register
+          ? 'Ditt bibliotek börjar med ett konto.'
+          : 'Dina böcker och tankar väntar på dig.'
+      }}
+    </p>
+    @if (error() || auth.connectionError()) {
+      <div class="alert alert-danger" role="alert">
+        {{ error() || auth.connectionError() }}
+      </div>
+    }
+    <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <div class="mb-4">
+        <label class="form-label" for="username">Användarnamn</label
+        ><input
+          id="username"
+          class="form-control"
+          formControlName="username"
+          autocomplete="username"
+          maxlength="32"
+          placeholder="Ditt användarnamn"
+          [class.is-invalid]="invalid('username')"
+          [attr.aria-invalid]="invalid('username')"
+          aria-describedby="username-help"
+        />
+        <div
+          id="username-help"
+          class="form-text"
+          [class.text-danger]="invalid('username')"
+        >
+          {{
+            register
+              ? '3–32 tecken: bokstäver, siffror, _ eller -.'
+              : invalid('username')
+                ? 'Ange ditt användarnamn.'
+                : ''
+          }}
+        </div>
+      </div>
+      <div class="mb-4">
+        <label class="form-label" for="password">Lösenord</label>
+        <div class="password-field">
+          <input
+            id="password"
+            class="form-control"
+            [type]="showPassword() ? 'text' : 'password'"
+            formControlName="password"
+            [attr.autocomplete]="
+              register ? 'new-password' : 'current-password'
+            "
+            maxlength="128"
+            placeholder="Ditt lösenord"
+            [class.is-invalid]="invalid('password')"
+            [attr.aria-invalid]="invalid('password')"
+            aria-describedby="password-help"
+          /><button
+            type="button"
+            class="btn icon-button"
+            (click)="showPassword.set(!showPassword())"
+            [attr.aria-label]="
+              showPassword() ? 'Dölj lösenord' : 'Visa lösenord'
+            "
+          >
+            <i
+              class="fa-regular"
+              [class.fa-eye]="!showPassword()"
+              [class.fa-eye-slash]="showPassword()"
+              aria-hidden="true"
+            ></i>
+          </button>
+        </div>
+        <div
+          id="password-help"
+          class="form-text"
+          [class.text-danger]="invalid('password')"
+        >
+          {{
+            register
+              ? 'Använd 10–128 tecken, gärna en lång lösenfras.'
+              : invalid('password')
+                ? 'Ange ditt lösenord.'
+                : ''
+          }}
+        </div>
+      </div>
+      @if (register) {
+        <div class="mb-4">
+          <label class="form-label" for="confirm-password"
+            >Bekräfta lösenord</label
+          ><input
+            id="confirm-password"
+            class="form-control"
+            type="password"
+            formControlName="confirmPassword"
+            autocomplete="new-password"
+            maxlength="128"
+            [class.is-invalid]="mismatch()"
+            [attr.aria-invalid]="mismatch()"
+            aria-describedby="confirm-help"
+          />
+          @if (mismatch()) {
+            <div id="confirm-help" class="form-text text-danger">
+              Lösenorden behöver vara likadana.
+            </div>
+          }
+        </div>
+      }
+      <button
+        class="btn btn-primary w-100"
+        type="submit"
+        [disabled]="busy()"
+      >
+        {{
+          busy() ? 'Ett ögonblick…' : register ? 'Skapa konto' : 'Logga in'
+        }}
+        <i class="fa-solid fa-arrow-right ms-2" aria-hidden="true"></i>
+      </button>
+    </form>
+    <p class="auth-switch">
+      {{ register ? 'Har du redan ett konto?' : 'Ny här?' }}
+      <a [routerLink]="register ? '/logga-in' : '/registrera'">{{
+        register ? 'Logga in' : 'Skapa ett konto'
+      }}</a>
+    </p>
+    <p class="privacy-note">
+      <i class="fa-solid fa-lock" aria-hidden="true"></i> Ditt bibliotek är
+      privat och kopplat till ditt konto.
+    </p>
+  </div>
+</section>

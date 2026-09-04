@@ -1,0 +1,79 @@
+<section class="page-heading">
+  <div>
+    <span class="eyebrow">ORD ATT TA MED SIG</span>
+    <h1>Mina citat<span class="heading-dot">.</span></h1>
+    <p>Små rader som får stanna lite längre.</p>
+  </div>
+  <a class="btn btn-primary" routerLink="/citat/ny"
+    ><i class="fa-solid fa-plus" aria-hidden="true"></i> Lägg till nytt
+    citat</a
+  >
+</section>
+<div class="collection-bar">
+  <span class="collection-count"
+    ><i class="fa-regular fa-heart" aria-hidden="true"></i>
+    {{ quotes().length }} sparade citat</span
+  ><span>Din egen samling av favoritord</span>
+</div>
+@if (loading()) {
+  <div class="empty-state card" role="status">Hämtar dina citat…</div>
+} @else if (error()) {
+  <div class="alert alert-danger" role="alert">
+    {{ error() }}
+    <button
+      type="button"
+      class="btn btn-outline-secondary ms-2"
+      (click)="load()"
+    >
+      Försök igen
+    </button>
+  </div>
+} @else if (!quotes().length) {
+  <div class="empty-state card">
+    <span class="empty-icon"
+      ><i class="fa-solid fa-quote-left" aria-hidden="true"></i
+    ></span>
+    <h2>Vilka ord vill du minnas?</h2>
+    <p>Samla ditt första favoritcitat här.</p>
+    <a routerLink="/citat/ny" class="btn btn-outline-primary"
+      >Lägg till ditt första citat</a
+    >
+  </div>
+} @else {
+  <section class="quote-grid" aria-label="Citatlista">
+    @for (quote of quotes(); track quote.id; let index = $index) {
+      <article
+        class="quote-card card"
+        [class.quote-accent]="index % 3 === 0"
+      >
+        <i
+          class="fa-solid fa-quote-left quote-symbol"
+          aria-hidden="true"
+        ></i>
+        <blockquote>{{ quote.text }}</blockquote>
+        <p class="quote-author">— {{ quote.author }}</p>
+        <div class="quote-actions">
+          <a
+            class="btn btn-sm btn-outline-secondary"
+            [routerLink]="['/citat', quote.id, 'redigera']"
+            [attr.aria-label]="'Redigera citat av ' + quote.author"
+            ><i class="fa-solid fa-pen" aria-hidden="true"></i> Redigera</a
+          ><button
+            class="btn btn-sm btn-delete"
+            type="button"
+            [disabled]="deleting() === quote.id"
+            (click)="remove(quote)"
+            [attr.aria-label]="'Radera citat av ' + quote.author"
+          >
+            <i class="fa-regular fa-trash-can" aria-hidden="true"></i>
+            Radera
+          </button>
+        </div>
+      </article>
+    }
+  </section>
+}
+<p class="page-note">
+  Du börjar med fem originalskrivna exempelcitat. Behåll dem du gillar,
+  redigera eller byt ut dem mot dina egna.
+</p>
