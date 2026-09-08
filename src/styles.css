@@ -1,5 +1,4 @@
-/* Global styles */
-/* Shared theme extends Bootstrap's components and color modes. */
+/* Bokrum colors used together with Bootstrap's light and dark themes. */
 :root,
 [data-bs-theme="light"] {
   --paper: #f7f6f1;
@@ -35,11 +34,7 @@
   --bs-link-color: #b5d9be;
   --bs-link-hover-color: #e1f0e0;
 }
-* {
-  box-sizing: border-box;
-}
 body {
-  margin: 0;
   font-size: 15px;
   -webkit-font-smoothing: antialiased;
 }
